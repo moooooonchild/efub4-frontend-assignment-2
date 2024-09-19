@@ -27,8 +27,6 @@ const isDeveloper = (target: Developer | Person): target is Developer => {
   return (target as Developer).skill !== undefined;
 };
 
-/* Kim을 매개변수로 받아 Kim의 타입이 Developer인지 판단하는
-    사용자 정의 타입 가드 함수 isDeveloper를 작성해주세요. */
 if (!isDeveloper(kim)) {
   console.log(kim.age);
 } else {
