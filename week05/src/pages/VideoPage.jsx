@@ -15,7 +15,7 @@ const GlobalStyle = createGlobalStyle`
 
 const VideoPage = () => {
   const [target, setTarget] = useState(null);
-  const VIDEO_LIMIT = 50;
+  const VIDEO_LIMIT = 20;
 
   const [images, setImages] = useState([]);
   const [images_, setImages_] = useState([]);
@@ -24,8 +24,6 @@ const VideoPage = () => {
     const interval = setInterval(createImage, 1500);
     const timeoutId = setTimeout(() => {
       const interval_ = setInterval(createImage_, 1500);
-
-      // 컴포넌트가 언마운트될 때 두 번째 interval도 정리
       return () => clearInterval(interval_);
     }, 750);
 
@@ -43,7 +41,7 @@ const VideoPage = () => {
       key: Date.now(),
       startX,
       finishX,
-      startY: window.scrollY - 200, // scrollY 대신 window.scrollY 사용
+      startY: window.scrollY - 200,
     };
     setImages((prev) => [...prev, newImage]);
   };
@@ -56,7 +54,7 @@ const VideoPage = () => {
       key: Date.now(),
       startX,
       finishX,
-      startY: window.scrollY - 200, // scrollY 대신 window.scrollY 사용
+      startY: window.scrollY - 200,
     };
     setImages_((prev) => [...prev, newImage]);
   };
@@ -69,54 +67,54 @@ const VideoPage = () => {
     setImages_((prevImages) => prevImages.filter((image) => image.id !== id));
   };
 
-  //   const {
-  //     data,
-  //     error,
-  //     fetchNextPage,
-  //     hasNextPage,
-  //     isFetching,
-  //     isFetchingNextPage,
-  //   } = useInfiniteQuery({
-  //     queryKey: ['posts'],
-  //     queryFn: getVideoList,
-  //     getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
-  //   });
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['posts'],
+    queryFn: getVideoList,
+    getNextPageParam: (lastPage) => lastPage.nextPageToken || undefined,
+  });
 
-  //   const totalVideos =
-  //     data?.pages.reduce((acc, page) => acc + page.items.length, 0) || 0;
+  const totalVideos =
+    data?.pages.reduce((acc, page) => acc + page.items.length, 0) || 0;
 
-  //   useEffect(() => {
-  //     let observer;
-  //     if (target) {
-  //       observer = new IntersectionObserver(onIntersect, { threshold: 0.2 });
-  //       observer.observe(target);
-  //     }
-  //     return () => observer && observer.disconnect();
-  //   }, [target]);
+  useEffect(() => {
+    let observer;
+    if (target) {
+      observer = new IntersectionObserver(onIntersect, { threshold: 0.2 });
+      observer.observe(target);
+    }
+    return () => observer && observer.disconnect();
+  }, [target]);
 
-  //   const onIntersect = async ([entry], observer) => {
-  //     if (entry.isIntersecting && hasNextPage && totalVideos < VIDEO_LIMIT) {
-  //       observer.unobserve(entry.target);
-  //       await fetchNextPage();
-  //       observer.observe(entry.target);
-  //     }
-  //   };
+  const onIntersect = async ([entry], observer) => {
+    if (entry.isIntersecting && hasNextPage && totalVideos < VIDEO_LIMIT) {
+      observer.unobserve(entry.target);
+      await fetchNextPage();
+      observer.observe(entry.target);
+    }
+  };
 
-  //   if (isFetching && !isFetchingNextPage) {
-  //     return (
-  //       <Container>
-  //         <Text>Loading...</Text>
-  //       </Container>
-  //     );
-  //   }
+  if (isFetching && !isFetchingNextPage) {
+    return (
+      <Container>
+        <Text>Loading...</Text>
+      </Container>
+    );
+  }
 
-  //   if (error) {
-  //     return (
-  //       <Container>
-  //         <Text>ERROR</Text>
-  //       </Container>
-  //     );
-  //   }
+  if (error) {
+    return (
+      <Container>
+        <Text>API request limit</Text>
+      </Container>
+    );
+  }
 
   return (
     <>
@@ -158,68 +156,22 @@ const VideoPage = () => {
           <Point>the present</Point>
         </Text>
         <VideoList>
-          <VideoWrapper>
-            <YouTube
-              key="IO3EHVtHI8Q"
-              videoId="IO3EHVtHI8Q"
-              opts={{
-                width: '100%',
-                height: '100%',
-                playerVars: {
-                  autoplay: 0,
-                  rel: 0,
-                  modestbranding: 1,
-                },
-              }}
-            />
-          </VideoWrapper>
-
-          <VideoWrapper>
-            <YouTube
-              key="IO3EHVtHI8Q"
-              videoId="IO3EHVtHI8Q"
-              opts={{
-                width: '100%',
-                height: '100%',
-                playerVars: {
-                  autoplay: 0,
-                  rel: 0,
-                  modestbranding: 1,
-                },
-              }}
-            />
-          </VideoWrapper>
-
-          <VideoWrapper>
-            <YouTube
-              key="IO3EHVtHI8Q"
-              videoId="IO3EHVtHI8Q"
-              opts={{
-                width: '100%',
-                height: '100%',
-                playerVars: {
-                  autoplay: 0,
-                  rel: 0,
-                  modestbranding: 1,
-                },
-              }}
-            />
-          </VideoWrapper>
-
-          {/* {data?.pages.map((page) =>
+          {data?.pages.map((page) =>
             page.items.map((video) => (
-              <YouTube
-                key={video.id.videoId}
-                videoId={video.id.videoId}
-                opts={{ width: '100%', height: '300' }}
-              />
+              <VideoWrapper>
+                <YouTube
+                  key={video.id.videoId}
+                  videoId={video.id.videoId}
+                  opts={{ width: '100%', height: '300' }}
+                />
+              </VideoWrapper>
             ))
           )}
 
           {totalVideos < VIDEO_LIMIT && (
             <div ref={setTarget} style={{ height: '1px' }} />
           )}
-          {isFetchingNextPage && <div>Loading more videos...</div>} */}
+          {isFetchingNextPage && <div>Loading more videos...</div>}
         </VideoList>
       </Container>
     </>
@@ -231,6 +183,7 @@ export default VideoPage;
 export const Container = styled.div`
   height: 100%;
   height: auto;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
