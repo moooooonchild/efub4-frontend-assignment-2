@@ -2,8 +2,13 @@ import { Suspense } from 'react';
 import MovieInfo, { getMovie } from '../../../../components/movie-info';
 import MovieVideos from '../../../../components/movie-videos';
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const movie = await getMovie(params.id);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params; // params가 Promise라면 await로 처리
+  const movie = await getMovie(id);
   return {
     title: movie.title,
   };
@@ -12,9 +17,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 export default async function MovieDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params; // 마찬가지로 params await 처리
 
   return (
     <div>
